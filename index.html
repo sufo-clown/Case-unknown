@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CASE: UNKNOWN</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #0b0d10;
+            color: #eeeeee;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        .app {
+            max-width: 500px;
+            margin: auto;
+            padding: 25px 18px;
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 55px;
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            letter-spacing: 3px;
+            margin-top: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin: 8px 0 30px;
+        }
+
+        .case-card {
+            background: #15181d;
+            border: 1px solid #292d34;
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 20px;
+        }
+
+        .case-number {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .case-title {
+            font-size: 25px;
+            margin: 8px 0 12px;
+        }
+
+        .description {
+            color: #bbb;
+            line-height: 1.6;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 12px;
+            background: #242932;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(.98);
+        }
+
+        .primary {
+            background: #eeeeee;
+            color: #111;
+            font-weight: bold;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .clue {
+            background: #171a20;
+            border-left: 3px solid #777;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+
+        .suspect {
+            background: #15181d;
+            padding: 18px;
+            border-radius: 12px;
+            margin-top: 10px;
+        }
+
+        .suspect h3 {
+            margin-bottom: 7px;
+        }
+
+        .suspect p {
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        .back {
+            background: transparent;
+            border: 1px solid #333;
+        }
+
+        .result {
+            text-align: center;
+            padding: 25px 5px;
+        }
+
+        .result-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- HOME -->
+    <div id="home" class="screen active">
+
+        <div class="logo">🕵️</div>
+
+        <h1>CASE: UNKNOWN</h1>
+
+        <p class="subtitle">
+            Every clue matters.
+        </p>
+
+        <div class="case-card">
+
+            <div class="case-number">CASE #001</div>
+
+            <div class="case-title">
+                The Locked Room
+            </div>
+
+            <p class="description">
+                A wealthy businessman has been found dead
+                inside his study at 11:47 PM.
+                The door was locked from the inside.
+            </p>
+
+            <button class="primary" onclick="startCase()">
+                🔎 INVESTIGATE
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- CASE -->
+    <div id="case" class="screen">
+
+        <div class="case-card">
+
+            <div class="case-number">CASE #001</div>
+
+            <h2>The Locked Room</h2>
+
+            <p class="description">
+                Four people were inside the house that night.
+                One of them is lying.
+            </p>
+
+        </div>
+
+        <button onclick="investigate('room')">
+            🔍 Examine the room
+        </button>
+
+        <button onclick="investigate('window')">
+            🪟 Examine the window
+        </button>
+
+        <button onclick="investigate('phone')">
+            📱 Examine the phone
+        </button>
+
+        <button onclick="showSuspects()">
+            👥 Question suspects
+        </button>
+
+        <button onclick="showEvidence()">
+            🧩 View evidence
+        </button>
+
+        <button class="primary" onclick="accuse()">
+            ⚖️ Make accusation
+        </button>
+
+        <button class="back" onclick="goHome()">
+            ← Back
+        </button>
+
+    </div>
+
+
+    <!-- SUSPECTS -->
+    <div id="suspects" class="screen">
+
+        <h2>👥 Suspects</h2>
+
+        <div class="suspect">
+            <h3>1. Elena — Wife</h3>
+            <p>
+                Claims she was upstairs reading from 11:00 PM
+                until midnight.
+            </p>
+        </div>
+
+        <div class="suspect">
+            <h3>2. Daniel — Brother</h3>
+            <p>
+                Claims he was outside making a phone call.
+            </p>
+        </div>
+
+        <div class="suspect">
+            <h3>3. Marcus — Butler</h3>
+            <p>
+                Claims he was preparing the kitchen for breakfast.
+            </p>
+        </div>
+
+        <div class="suspect">
+            <h3>4. Sofia — Secretary</h3>
+            <p>
+                Claims she left the study at 11:15 PM.
+            </p>
+        </div>
+
+        <button class="back" onclick="showScreen('case')">
+            ← Back to investigation
+        </button>
+
+    </div>
+
+
+    <!-- EVIDENCE -->
+    <div id="evidence" class="screen">
+
+        <h2>🧩 Evidence</h2>
+
+        <div id="clues">
+
+            <p class="description" style="margin-top:15px;">
+                You haven't discovered any clues yet.
+            </p>
+
+        </div>
+
+        <button class="back" onclick="showScreen('case')">
+            ← Back to investigation
+        </button>
+
+    </div>
+
+
+    <!-- ACCUSATION -->
+    <div id="accusation" class="screen">
+
+        <h2>⚖️ Who is the killer?</h2>
+
+        <p class="description" style="margin:15px 0;">
+            Choose carefully. You only get one final accusation.
+        </p>
+
+        <button onclick="solve('Elena')">👩 Elena</button>
+        <button onclick="solve('Daniel')">👨 Daniel</button>
+        <button onclick="solve('Marcus')">🧔 Marcus</button>
+        <button onclick="solve('Sofia')">👩 Sofia</button>
+
+        <button class="back" onclick="showScreen('case')">
+            ← Back
+        </button>
+
+    </div>
+
+
+    <!-- RESULT -->
+    <div id="result" class="screen">
+
+        <div class="result">
+
+            <div id="resultIcon" class="result-icon"></div>
+
+            <h2 id="resultTitle"></h2>
+
+            <p id="resultText" class="description"
+               style="margin-top:15px;">
+            </p>
+
+            <button class="primary" onclick="restart()">
+                🔄 Play Again
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const tg = window.Telegram.WebApp;
+
+    tg.ready();
+    tg.expand();
+
+    let clues = [];
+
+    function showScreen(id) {
+
+        document.querySelectorAll(".screen")
+            .forEach(screen => {
+                screen.classList.remove("active");
+            });
+
+        document.getElementById(id)
+            .classList.add("active");
+    }
+
+    function startCase() {
+
+        clues = [];
+
+        document.getElementById("clues").innerHTML =
+            '<p class="description" style="margin-top:15px;">You haven\'t discovered any clues yet.</p>';
+
+        showScreen("case");
+    }
+
+    function investigate(type) {
+
+        let clue = "";
+
+        if (type === "room") {
+
+            clue =
+                "🩸 The victim was found beside his desk. " +
+                "There are no signs of forced entry.";
+
+        }
+
+        if (type === "window") {
+
+            clue =
+                "🪟 The window is slightly open, but there " +
+                "are no footprints outside it.";
+
+        }
+
+        if (type === "phone") {
+
+            clue =
+                "📱 The victim's last message was sent at " +
+                "11:32 PM to someone saved as 'S'.";
+        }
+
+        if (!clues.includes(clue)) {
+
+            clues.push(clue);
+
+            document.getElementById("clues").innerHTML =
+                clues.map(c =>
+                    `<div class="clue">${c}</div>`
+                ).join("");
+
+        } else {
+
+            tg.showAlert("You already discovered this clue.");
+        }
+    }
+
+    function showSuspects() {
+        showScreen("suspects");
+    }
+
+    function showEvidence() {
+        showScreen("evidence");
+    }
+
+    function accuse() {
+        showScreen("accusation");
+    }
+
+    function solve(name) {
+
+        showScreen("result");
+
+        if (name === "Sofia") {
+
+            document.getElementById("resultIcon").innerText = "🎉";
+
+            document.getElementById("resultTitle").innerText =
+                "CASE SOLVED";
+
+            document.getElementById("resultText").innerText =
+                "Sofia was the killer. The message sent at " +
+                "11:32 PM was connected to her. She used her " +
+                "knowledge of the study to make the locked room " +
+                "look impossible.";
+
+        } else {
+
+            document.getElementById("resultIcon").innerText = "❌";
+
+            document.getElementById("resultTitle").innerText =
+                "WRONG ACCUSATION";
+
+            document.getElementById("resultText").innerText =
+                "You accused " + name +
+                ". The real killer was Sofia. " +
+                "Look more carefully at the evidence.";
+
+        }
+    }
+
+    function restart() {
+        startCase();
+    }
+
+    function goHome() {
+        showScreen("home");
+    }
+
+</script>
+
+</body>
+  </html>
